@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gagan — Data Science Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #18181f;
+    --line: rgba(255,255,255,0.07);
+    --line2: rgba(255,255,255,0.13);
+    --accent: #c8f03c;
+    --accent2: #7ef2c8;
+    --accent3: #f0a03c;
+    --text: #f0ede6;
+    --muted: #8a8a95;
+    --muted2: #5a5a68;
+    --card: #13131a;
+    --tag-bg: rgba(200,240,60,0.08);
+    --tag-border: rgba(200,240,60,0.25);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.6;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 4rem;
+    background: rgba(10,10,15,0.75);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── MAIN LAYOUT ── */
+  main { position: relative; z-index: 1; }
+
+  section { padding: 7rem 4rem; max-width: 1100px; margin: 0 auto; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 8rem; padding-bottom: 4rem;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--accent);
+  }
+  .hero-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    line-height: 1.0;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 560px;
+    margin-top: 1.5rem;
+    line-height: 1.8;
+  }
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--accent);
+    color: #0a0a0f;
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border: 1px solid var(--line2);
+    color: var(--muted);
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+  .hero-scroll {
+    position: absolute; bottom: 2.5rem; left: 4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--muted2);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .hero-scroll::after {
+    content: '';
+    display: block;
+    width: 48px; height: 1px;
+    background: var(--muted2);
+    animation: scrollline 2s ease-in-out infinite;
+  }
+  @keyframes scrollline {
+    0%, 100% { transform: scaleX(1); transform-origin: left; }
+    50% { transform: scaleX(0.4); transform-origin: left; }
+  }
+
+  /* floating accent shapes */
+  .hero-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,240,60,0.06) 0%, transparent 70%);
+    top: 10%; right: -100px;
+    pointer-events: none;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::before {
+    content: '';
+    display: block; width: 24px; height: 1px;
+    background: var(--accent);
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .section-desc {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 0 4rem;
+    max-width: 1100px;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .project-card {
+    background: var(--card);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s;
+    text-decoration: none;
+    display: flex; flex-direction: column;
+  }
+  .project-card:hover { background: var(--bg3); }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .project-card:hover::after { transform: scaleX(1); }
+
+  .project-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--muted2);
+    margin-bottom: 1.5rem;
+  }
+  .project-tag-row {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 2px;
+    border: 1px solid var(--tag-border);
+    background: var(--tag-bg);
+    color: var(--accent);
+  }
+  .tag.teal {
+    background: rgba(126,242,200,0.07);
+    border-color: rgba(126,242,200,0.25);
+    color: var(--accent2);
+  }
+  .tag.amber {
+    background: rgba(240,160,60,0.07);
+    border-color: rgba(240,160,60,0.25);
+    color: var(--accent3);
+  }
+  .project-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .project-title a {
+    color: inherit;
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.3s ease, color 0.2s;
+  }
+  .project-title a:hover {
+    color: var(--accent);
+    background-size: 100% 1px;
+  }
+  .project-subtitle {
+    font-size: 0.82rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    flex: 1;
+    margin-bottom: 1.75rem;
+  }
+
+  /* Findings list */
+  .project-findings {
+    border-top: 1px solid var(--line);
+    padding-top: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+  .findings-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 0.75rem;
+  }
+  .findings-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .findings-list li {
+    font-size: 0.875rem;
+    color: var(--muted);
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.5;
+  }
+  .findings-list li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+
+  .project-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: auto;
+  }
+  .project-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: gap 0.2s;
+  }
+  .project-link:hover { gap: 0.7rem; }
+  .project-link .arrow {
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+  .project-link:hover .arrow { transform: translateX(3px); }
+
+  .project-lang {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted2);
+    display: flex; align-items: center; gap: 0.35rem;
+  }
+  .lang-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #f0a03c;
+    flex-shrink: 0;
+  }
+
+  /* full-width card for future project */
+  .project-card.full {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 3rem;
+  }
+  .project-card.full .project-main { flex: 1; }
+  .project-card.full .project-sidebar {
+    width: 260px; flex-shrink: 0;
+    border-left: 1px solid var(--line);
+    padding-left: 2.5rem;
+  }
+  .sidebar-stat { margin-bottom: 1.5rem; }
+  .sidebar-stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  .sidebar-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted2);
+    text-transform: uppercase;
+  }
+
+  /* ── SKILLS ── */
+  #skills { padding-top: 5rem; }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: 0;
+  }
+  .skill-cell {
+    background: var(--card);
+    padding: 2rem;
+    transition: background 0.2s;
+  }
+  .skill-cell:hover { background: var(--bg3); }
+  .skill-cell-icon {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  .skill-cell-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .skill-cell-items {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-text p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 1.25rem;
+  }
+  .about-text p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .about-sidebar {}
+  .about-card {
+    border: 1px solid var(--line);
+    background: var(--card);
+    padding: 1.75rem;
+    margin-bottom: 1px;
+  }
+  .about-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 1rem;
+  }
+  .about-card-item {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+  }
+  .about-card-item strong {
+    display: block;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  .about-card-item span {
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  /* ── CONTACT ── */
+  #contact { text-align: center; padding-bottom: 8rem; }
+  #contact .section-label { justify-content: center; }
+  #contact .section-label::before { display: none; }
+  #contact .section-title { font-size: clamp(2.5rem, 5vw, 4rem); }
+  .contact-links {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 1.5rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted2);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.5rem; }
+    section { padding: 5rem 1.5rem; }
+    .divider { margin: 0 1.5rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.full { flex-direction: column; }
+    .project-card.full .project-sidebar { width: 100%; border-left: none; border-top: 1px solid var(--line); padding-left: 0; padding-top: 1.5rem; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    #about { grid-template-columns: 1fr; gap: 3rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem; }
+    .hero-scroll { left: 1.5rem; }
+  }
+  @media (max-width: 580px) {
+    .skills-grid { grid-template-columns: 1fr; }
+    .hero-name { font-size: 3rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">GAGAN · DS</a>
+  <ul class="nav-links">
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<main>
+<section id="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-eyebrow">MSc Data Science · University of Birmingham</div>
+  <h1 class="hero-name">
+    Data<br><em>Science</em><br>Portfolio
+  </h1>
+  <p class="hero-subtitle">
+    Turning raw data into decisions — through rigorous analysis, machine learning, and evidence-driven storytelling.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn-primary">View Projects →</a>
+    <a href="https://github.com/Gagan0318" target="_blank" rel="noopener" class="btn-secondary">GitHub Profile</a>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">Scroll</div>
+</section>
+
+<!-- PROJECTS -->
+<hr class="divider"/>
+<section id="projects">
+  <div class="section-label">Work</div>
+  <h2 class="section-title">Projects</h2>
+  <p class="section-desc">Academic and independent data science work spanning end-to-end ML pipelines, NLP, criminal justice analytics, and socioeconomic enrichment using open government data.</p>
+
+  <div class="projects-grid">
+
+    <!-- PROJECT 1 -->
+    <div class="project-card fade-up">
+      <div class="project-tag-row">
+        <span class="tag">NLP · Zero-shot</span>
+        <span class="tag teal">XGBoost · SMOTE</span>
+        <span class="tag amber">SHAP · IMD</span>
+      </div>
+      <h3 class="project-title"><a href="https://github.com/Gagan0318/Restaurant-liquidation-risk-modelling" target="_blank" rel="noopener">Restaurant Liquidation Risk Modelling</a></h3>
+      <p class="project-subtitle">25,268 businesses · Companies House · Google Places API · ONS IMD 2019</p>
+      <div class="project-findings">
+        <div class="findings-label">Key findings</div>
+        <ul class="findings-list">
+          <li><strong style="color:var(--text);font-weight:500">64.2%</strong> of liquidated businesses had overdue accounts filings vs just <strong style="color:var(--text);font-weight:500">6.5%</strong> of active ones — a 10× gap and the single strongest predictor in the dataset</li>
+          <li>Liquidated businesses are on average <strong style="color:var(--text);font-weight:500">15 months older</strong> than active ones (68.6 vs 53.5 months) — failure risk peaks in the 3–7 year window, not at launch</li>
+          <li>Pubs &amp; bars liquidate at <strong style="color:var(--text);font-weight:500">9.9%</strong> — nearly double the sector average of ~5% and more than twice the rate of takeaways at 4.3%</li>
+          <li>All 7 BART sentiment dimensions showed &lt;0.05 separation between classes — customer perception signals do not reliably predict business failure; financial compliance signals dominate</li>
+          <li>ONS IMD 2019 deprivation decile joined at postcode level confirms businesses in more deprived neighbourhoods face elevated liquidation risk independent of review scores</li>
+          <li>SHAP values rank filing overdue status, company age, and hygiene scores as top predictors — sentiment dimensions rank 11th–17th, validating the EDA findings quantitatively</li>
+        </ul>
+      </div>
+      <div class="project-findings" style="margin-top:0.75rem;">
+        <div class="findings-label">Tools used</div>
+        <ul class="findings-list">
+          <li>pandas · numpy · scikit-learn · imbalanced-learn (SMOTE) · shap</li>
+          <li>XGBoost · TensorFlow / Keras · Hugging Face Transformers (bart-large-mnli)</li>
+          <li>Google Places API · Companies House · FSA Hygiene Ratings · ONS IMD 2019</li>
+        </ul>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/Gagan0318/Restaurant-liquidation-risk-modelling" target="_blank" rel="noopener" class="project-link">
+          View on GitHub <span class="arrow">→</span>
+        </a>
+        <span class="project-lang">
+          <span class="lang-dot" style="background:#f0a03c"></span>
+          Jupyter Notebook · 7 notebooks
+        </span>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="project-card fade-up" style="transition-delay:0.12s">
+      <div class="project-tag-row">
+        <span class="tag">EDA</span>
+        <span class="tag teal">Visualisation</span>
+        <span class="tag amber">Criminal Justice</span>
+      </div>
+      <h3 class="project-title"><a href="https://github.com/Gagan0318/UK-Crime-report" target="_blank" rel="noopener">UK Crime &amp; Justice Analytics</a></h3>
+      <p class="project-subtitle">Ethnicity · stop &amp; search · prosecutions · convictions · 2006–2023</p>
+      <div class="project-findings">
+        <div class="findings-label">Key findings</div>
+        <ul class="findings-list">
+          <li>Black individuals stopped at <strong style="color:var(--text);font-weight:500">4–9.5×</strong> the rate of White individuals per 1,000 population — disproportionality peaked at <strong style="color:var(--text);font-weight:500">9.6×</strong> in 2017 and <em>worsened</em> after the 2014 reform even as total S&amp;S volumes fell</li>
+          <li>Total prosecutions fell 2009–2017, yet conviction rates <em>rose</em> from ~76% to ~83% — fewer cases brought, but those that were brought succeeded more often, consistent with CPS charging reforms</li>
+          <li>Drug &amp; public order offences yield <strong style="color:var(--text);font-weight:500">&gt;90%</strong> conviction rates once charged; sexual offences sit at ~52% — the widest offence-type gap in the data</li>
+          <li>Males account for <strong style="color:var(--text);font-weight:500">6.2×</strong> more prosecutions than females — larger than any ethnic gap in the dataset, and consistent across all ethnic groups</li>
+          <li>S&amp;S of Black individuals generates prosecutions most efficiently despite the highest stop rate — raising questions about targeting thresholds and differential prosecution standards across ethnicities</li>
+          <li>Three derived metrics introduced: conviction rate, stop-to-prosecution efficiency ratio, and Black:White disproportionality ratio — none present in the raw government datasets</li>
+        </ul>
+      </div>
+      <div class="project-findings" style="margin-top:0.75rem;">
+        <div class="findings-label">Tools used</div>
+        <ul class="findings-list">
+          <li>pandas · numpy · matplotlib · seaborn</li>
+          <li>Three open government datasets from data.gov.uk · 2006–2023</li>
+        </ul>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/Gagan0318/UK-Crime-report" target="_blank" rel="noopener" class="project-link">
+          View on GitHub <span class="arrow">→</span>
+        </a>
+        <span class="project-lang">
+          <span class="lang-dot" style="background:#f0a03c"></span>
+          Jupyter Notebook
+        </span>
+      </div>
+    </div>
+
+    <!-- PROJECT 3 — COMING SOON -->
+    <div class="project-card full fade-up" style="transition-delay:0.2s">
+      <div class="project-main">
+        <div class="project-tag-row">
+          <span class="tag">Machine Learning</span>
+          <span class="tag teal">NLP · Reddit</span>
+          <span class="tag amber">Games Industry</span>
+        </div>
+        <h3 class="project-title">Predicting Video Game Commercial Success <span style="font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:400; color:var(--accent2); letter-spacing:0.04em;">(In progress)</span></h3>
+        <p class="project-subtitle">Steam · Reddit · Epic Games — multi-source ML</p>
+        <p class="project-desc">
+          MSc dissertation project building a predictive model for video game commercial success at launch, using a rich feature set drawn from Steam store data, Reddit community sentiment, and Epic Games metrics. Features span genre, microtransaction model, developer reputation, regional demographics, and pre-release buzz signals.
+        </p>
+        <div class="project-findings">
+          <div class="findings-label">Feature dimensions</div>
+          <ul class="findings-list" style="display:grid; grid-template-columns:1fr 1fr; gap:0.4rem 2rem;">
+            <li>Genre &amp; sub-genre classification</li>
+            <li>Developer &amp; publisher reputation score</li>
+            <li>Microtransaction model (F2P, DLC, Battle Pass)</li>
+            <li>Reddit pre-launch sentiment signals</li>
+            <li>Regional demographic penetration</li>
+            <li>Historical franchise performance</li>
+          </ul>
+        </div>
+      </div>
+      <div class="project-sidebar">
+        <div class="sidebar-stat">
+          <div class="sidebar-stat-value">3</div>
+          <div class="sidebar-stat-label">Data Sources</div>
+        </div>
+        <div class="sidebar-stat">
+          <div class="sidebar-stat-value">ML</div>
+          <div class="sidebar-stat-label">Approach</div>
+        </div>
+        <div class="sidebar-stat">
+          <div class="sidebar-stat-value" style="color:var(--accent2)">Live</div>
+          <div class="sidebar-stat-label">Status · 2025</div>
+        </div>
+        <p style="font-size:0.8rem; color:var(--muted2); line-height:1.6; margin-top:1rem; font-family:'DM Mono',monospace; letter-spacing:0.03em;">
+          Repository will be published on completion.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<hr class="divider"/>
+<section id="skills" style="padding-top:5rem; padding-bottom:5rem;">
+  <div class="section-label">Toolkit</div>
+  <h2 class="section-title">Skills</h2>
+
+  <div class="skills-grid">
+    <div class="skill-cell fade-up">
+      <span class="skill-cell-icon">⬡</span>
+      <div class="skill-cell-title">Languages</div>
+      <div class="skill-cell-items">Python · SQL · R (basic)<br>Bash · Markdown · LaTeX</div>
+    </div>
+    <div class="skill-cell fade-up" style="transition-delay:0.07s">
+      <span class="skill-cell-icon">⬡</span>
+      <div class="skill-cell-title">Data & ML</div>
+      <div class="skill-cell-items">pandas · NumPy · scikit-learn<br>XGBoost · SHAP · imbalanced-learn<br>Hugging Face Transformers</div>
+    </div>
+    <div class="skill-cell fade-up" style="transition-delay:0.14s">
+      <span class="skill-cell-icon">⬡</span>
+      <div class="skill-cell-title">Visualisation</div>
+      <div class="skill-cell-items">Matplotlib · Seaborn<br>Plotly · Tableau (basic)</div>
+    </div>
+    <div class="skill-cell fade-up" style="transition-delay:0.21s">
+      <span class="skill-cell-icon">⬡</span>
+      <div class="skill-cell-title">Databases</div>
+      <div class="skill-cell-items">PostgreSQL · MongoDB<br>SQL normalisation · GDPR</div>
+    </div>
+    <div class="skill-cell fade-up" style="transition-delay:0.28s">
+      <span class="skill-cell-icon">⬡</span>
+      <div class="skill-cell-title">Methods</div>
+      <div class="skill-cell-items">Classification · SMOTE · SHAP<br>NLP · Zero-shot · EDA<br>Threshold Tuning · KNN Imputation</div>
+    </div>
+    <div class="skill-cell fade-up" style="transition-delay:0.35s">
+      <span class="skill-cell-icon">⬡</span>
+      <div class="skill-cell-title">Tools</div>
+      <div class="skill-cell-items">Jupyter · Git · GitHub<br>VS Code · Google Colab</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<hr class="divider"/>
+<section id="about" style="display:grid; grid-template-columns:1fr 320px; gap:5rem; align-items:start; padding-top:5rem; padding-bottom:5rem; max-width:1100px; margin:0 auto; padding-left:4rem; padding-right:4rem;">
+  <div class="about-text fade-up">
+    <div class="section-label">Background</div>
+    <h2 class="section-title">About</h2>
+    <p>
+      I'm a <strong>data scientist in training</strong> currently completing an MSc in Data Science at the University of Birmingham, building on a First Class BSc (Hons) in Mathematics from the University of Delhi.
+    </p>
+    <p>
+      My work sits at the intersection of <strong>rigorous statistical thinking</strong> and practical engineering — whether that's engineering features from messy real-world data, building interpretable ML pipelines, or communicating findings clearly through visualisation.
+    </p>
+    <p>
+      Outside of data, I've competed in <strong>badminton at state and national level</strong>, which has shaped how I approach high-pressure problems: methodically, with attention to pattern and strategy.
+    </p>
+    <p>
+      I'm actively pursuing <strong>graduate roles</strong> in data science, quantitative analysis, and machine learning engineering. If you'd like to discuss opportunities or collaborate, get in touch below.
+    </p>
+  </div>
+  <div class="fade-up" style="transition-delay:0.15s">
+    <div class="about-card">
+      <div class="about-card-title">Education</div>
+      <div class="about-card-item">
+        <strong>MSc Data Science</strong>
+        <span>University of Birmingham · 2024–2025</span>
+      </div>
+      <div class="about-card-item">
+        <strong>BSc (Hons) Mathematics — First Class</strong>
+        <span>University of Delhi · 2020–2023</span>
+      </div>
+    </div>
+    <div class="about-card" style="margin-top:1px;">
+      <div class="about-card-title">MSc Modules</div>
+      <div class="about-card-item">
+        <span>Algorithms in Data Science</span>
+      </div>
+      <div class="about-card-item">
+        <span>Programming with Python</span>
+      </div>
+      <div class="about-card-item">
+        <span>Storing &amp; Managing Data</span>
+      </div>
+      <div class="about-card-item">
+        <span>Visualisation · Current Topics in AI</span>
+      </div>
+    </div>
+    <div class="about-card" style="margin-top:1px;">
+      <div class="about-card-title">Interests</div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--muted); line-height:1.9; letter-spacing:0.03em;">
+        Machine Learning · NLP<br>
+        Time Series &amp; Finance<br>
+        Competitive Badminton<br>
+        Open Data &amp; Civic Analytics
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<hr class="divider"/>
+<section id="contact">
+  <div class="section-label" style="justify-content:center;">
+    <span style="width:24px;height:1px;background:var(--accent);display:inline-block;"></span>
+    Get in touch
+  </div>
+  <h2 class="section-title fade-up">Let's work together.</h2>
+  <p class="section-desc fade-up" style="margin:0 auto 0; text-align:center; max-width:420px;">
+    Open to graduate roles, internships, and research collaborations in data science and machine learning.
+  </p>
+  <div class="contact-links fade-up">
+    <a href="https://github.com/Gagan0318" target="_blank" rel="noopener" class="btn-primary">GitHub →</a>
+    <a href="mailto:" class="btn-secondary">Email me</a>
+    <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="btn-secondary">LinkedIn</a>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 GAGAN · DATA SCIENCE PORTFOLIO</p>
+  <p>MSc DATA SCIENCE · UNIVERSITY OF BIRMINGHAM</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
